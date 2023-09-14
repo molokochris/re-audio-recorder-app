@@ -1,1 +1,1 @@
-audio recorder app developed using React Native
+audio recorder app developed using React Native.
