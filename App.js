@@ -31,27 +31,28 @@ export default function App() {
 
   const recordingsDir = FileSystem.documentDirectory + "audio-recordings/";
 
-  useEffect(() => {
-    //Check if the Document Directory was created
-    const makeDir = async () => {
-      const dir = await FileSystem.getInfoAsync(recordingsDir);
-      if (!dir.exists) {
-        console.log("Recordings Folder directory doesn't exist, creating....");
-        await FileSystem.makeDirectoryAsync(recordingsDir, {
-          intermediates: true,
-        });
-      }
-      const dirInfo = await FileSystem.readDirectoryAsync(recordingsDir);
-      console.log("URI of Recording Folder.: ", recordingsDir);
-      console.log(dir);
-      console.log("Contents of Recording Folder:");
-      console.log(dirInfo);
-    };
+  // useEffect(() => {
+  //   //Check if the Document Directory was created
+  //   const makeDir = async () => {
+  //     const dir = await FileSystem.getInfoAsync(recordingsDir);
+  //     if (!dir.exists) {
+  //       console.log("Recordings Folder directory doesn't exist, creating....");
+  //       await FileSystem.makeDirectoryAsync(recordingsDir, {
+  //         intermediates: true,
+  //       });
+  //     }
+  //     const dirInfo = await FileSystem.readDirectoryAsync(recordingsDir);
+  //     console.log("URI of Recording Folder.: ", recordingsDir);
+  //     console.log(dir);
+  //     console.log("Contents of Recording Folder:");
+  //     console.log(dirInfo);
+  //   };
 
-    makeDir();
-  }, [update]);
+  //   makeDir();
+  // }, [update]);
 
-  console.log(uri);
+  // console.log(uri);
+
   //Start Recording & Stop Recording
   async function startRecording() {
     try {
@@ -68,12 +69,6 @@ export default function App() {
         );
         setRecording(recording);
       }
-
-      // console.log("Starting recording..");
-      // const { recording } = await Audio.Recording.createAsync(
-      //   Audio.RecordingOptionsPresets.HIGH_QUALITY
-      // );
-      // setRecording(recording);
       console.log("Recording started");
     } catch (err) {
       console.error("Failed to start recording", err);
@@ -85,7 +80,6 @@ export default function App() {
     setRecording(undefined);
     await recording.stopAndUnloadAsync();
     let allRecordings = [...recordings];
-    // const uri = recording.getURI();
     const { sound, status } = await recording.createNewLoadedSoundAsync();
     allRecordings.push({
       sound: sound,
@@ -93,17 +87,6 @@ export default function App() {
       file: recording.getURI(),
     });
     console.log("Recording stopped and stored at:", uri);
-    // try {
-    //   await FileSystem.moveAsync({
-    //     from: uri,
-    //     to: recordingsDir,
-    //   });
-    //   console.log("Audio was moved! ;)");
-    // } catch (err) {
-    //   console.log("this is why: ", err);
-    // }
-    // setUri(uri);
-    // setUpdate(!update);
     setRecordings(allRecordings);
   }
 
@@ -131,7 +114,14 @@ export default function App() {
             onPress={() => recordingLine.sound.replayAsync()}
             title="Play"
           /> */}
-          <Pressable onPress={() => recordingLine.sound.replayAsync()}>
+          <Pressable
+            onPress={() => {
+              setPlaying(!playing);
+              playing === true
+                ? recordingLine.sound.replayAsync()
+                : recordingLine.sound.stopAsync();
+            }}
+          >
             <Image source={playing ? pause : play} style={styles.playIcon} />
           </Pressable>
         </View>
@@ -152,16 +142,16 @@ export default function App() {
       </View>
       <View style={styles.overContainer}>
         <View style={styles.recordList}>
-          <View style={styles.item}>
+          {/* <View style={styles.item}>
             <Text style={styles.recordName}>Recording name</Text>
             <Pressable>
               <Image source={playing ? pause : play} style={styles.playIcon} />
-            </Pressable>
-            {/* <Button
+            </Pressable> */}
+          {/* <Button
               title={recording.length > 0 ? "Clear Recordings" : ""}
               onPress={clearRecordings}
             /> */}
-          </View>
+          {/* </View> */}
           {getRecordingLines()}
         </View>
         <View style={[styles.recordBtn, styles.Btn]}>
