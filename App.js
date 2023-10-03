@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
 } from "react-native";
 import Home from "./components/Home";
 import { Audio } from "expo-av";
@@ -142,17 +143,19 @@ export default function App() {
       </View>
       <View style={styles.overContainer}>
         <View style={styles.recordList}>
-          {/* <View style={styles.item}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {/* <View style={styles.item}>
             <Text style={styles.recordName}>Recording name</Text>
             <Pressable>
               <Image source={playing ? pause : play} style={styles.playIcon} />
             </Pressable> */}
-          {/* <Button
+            {/* <Button
               title={recording.length > 0 ? "Clear Recordings" : ""}
               onPress={clearRecordings}
             /> */}
-          {/* </View> */}
-          {getRecordingLines()}
+            {/* </View> */}
+            {getRecordingLines()}
+          </ScrollView>
         </View>
         <View style={[styles.recordBtn, styles.Btn]}>
           <Pressable
