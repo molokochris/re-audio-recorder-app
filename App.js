@@ -23,6 +23,7 @@ export default function App() {
   // console.log(Date.now());
   const [recording, setRecording] = useState();
   const [isRecording, setIsRecording] = useState(false);
+  const [recordings, setRecordings] = useState([]);
   const [playing, setPlaying] = useState(false);
   const [sound, setSound] = useState();
   const [update, setUpdate] = useState("");
@@ -54,18 +55,25 @@ export default function App() {
   //Start Recording & Stop Recording
   async function startRecording() {
     try {
+      const perm = await Audio.requestPermissionsAsync();
       console.log("Requesting permissions..");
-      await Audio.requestPermissionsAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
+      if (perm.status === "granted") {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true,
+        });
+        console.log("Starting recording..");
+        const { recording } = await Audio.Recording.createAsync(
+          Audio.RECORDING_OPTIONS_PRESENT_HIGH_QUALITY
+        );
+        setRecording(recording);
+      }
 
-      console.log("Starting recording..");
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
-      setRecording(recording);
+      // console.log("Starting recording..");
+      // const { recording } = await Audio.Recording.createAsync(
+      //   Audio.RecordingOptionsPresets.HIGH_QUALITY
+      // );
+      // setRecording(recording);
       console.log("Recording started");
     } catch (err) {
       console.error("Failed to start recording", err);
@@ -76,7 +84,14 @@ export default function App() {
     console.log("Stopping recording..");
     setRecording(undefined);
     await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
+    let allRecordings = [...recordings];
+    // const uri = recording.getURI();
+    const { sound, status } = await recording.createNewLoadedSoundAsync();
+    allRecordings.push({
+      sound: sound,
+      duration: getDurationFormatted(status.durationMillis),
+      file: recording.getURI(),
+    });
     console.log("Recording stopped and stored at:", uri);
     // try {
     //   await FileSystem.moveAsync({
@@ -87,30 +102,45 @@ export default function App() {
     // } catch (err) {
     //   console.log("this is why: ", err);
     // }
-    setUri(uri);
-    setUpdate(!update);
+    // setUri(uri);
+    // setUpdate(!update);
+    setRecordings(allRecordings);
   }
 
-  // Playing Recording & ...
-
-  // async function playSound() {
-  //   console.log("Loading Sound");
-  //   const { sound } = await Audio.Sound.createAsync(require(uri));
-  //   setSound(sound);
-
-  //   console.log("Playing Sound");
-  //   setPlaying(!playing);
-  //   await sound.playAsync();
-  // }
-
-  // useEffect(() => {
-  //   return sound
-  //     ? () => {
-  //         console.log("Unloading Sound");
-  //         sound.unloadAsync();
-  //       }
-  //     : undefined;
-  // }, [sound]);
+  function getDurationFormatted(milliseconds) {
+    const minutes = milliseconds / 1000 / 60;
+    const seconds = Math.round((minutes - Math.floor(minutes)) * 60);
+    return seconds < 10
+      ? `${Math.floor(minutes)}:0${seconds}`
+      : `${Math.floor(minutes)}:${seconds}`;
+  }
+  function getRecordingLines() {
+    return recordings.map((recordingLine, index) => {
+      return (
+        <View key={index} style={styles.item}>
+          {/* <View key={index} style={styles.row}> */}
+          {/* <Text style={styles.fill}> */}
+          <Text style={styles.recordName}>
+            Recording #{index + 1} | {recordingLine.duration}
+          </Text>
+          {/* <Button
+            onPress={() => recordingLine.sound.replayAsync()}
+            title="Play"
+          /> */}
+          {/* <Button
+            onPress={() => recordingLine.sound.replayAsync()}
+            title="Play"
+          /> */}
+          <Pressable onPress={() => recordingLine.sound.replayAsync()}>
+            <Image source={playing ? pause : play} style={styles.playIcon} />
+          </Pressable>
+        </View>
+      );
+    });
+  }
+  function clearRecordings() {
+    setRecordings([]);
+  }
 
   return (
     <View style={styles.container}>
@@ -121,35 +151,19 @@ export default function App() {
         {/* <Text style={styles.logo}>Snip</Text> */}
       </View>
       <View style={styles.overContainer}>
-        {/* <FlatList> */}
         <View style={styles.recordList}>
           <View style={styles.item}>
             <Text style={styles.recordName}>Recording name</Text>
             <Pressable>
               <Image source={playing ? pause : play} style={styles.playIcon} />
             </Pressable>
+            {/* <Button
+              title={recording.length > 0 ? "Clear Recordings" : ""}
+              onPress={clearRecordings}
+            /> */}
           </View>
-          <View style={styles.item}>
-            <Text style={styles.recordName}>Recording name</Text>
-            <Pressable onPress={() => setPlaying(!playing)}>
-              <Image source={playing ? pause : play} style={styles.playIcon} />
-            </Pressable>
-          </View>
-          <View style={styles.item}>
-            <Text style={styles.recordName}>Recording name</Text>
-            <Pressable onPress={() => setPlaying(!playing)}>
-              <Image source={playing ? pause : play} style={styles.playIcon} />
-            </Pressable>
-          </View>
-          <View style={styles.item}>
-            <Text style={styles.recordName}>Recording name</Text>
-            <Pressable onPress={() => setPlaying(!playing)}>
-              <Image source={playing ? pause : play} style={styles.playIcon} />
-            </Pressable>
-          </View>
+          {getRecordingLines()}
         </View>
-        {/* </FlatList> */}
-        {/* <View> */}
         <View style={[styles.recordBtn, styles.Btn]}>
           <Pressable
             style={[
@@ -157,7 +171,6 @@ export default function App() {
               { backgroundColor: recording ? "#EB5E55" : "#9A8F97" },
             ]}
             onPress={recording ? stopRecording : startRecording}
-            // onPress={() => setRecording(!recording)}
           >
             <Text style={styles.recordBtnText}>
               {recording ? "STOP" : "RECORD"}
@@ -212,6 +225,7 @@ const styles = StyleSheet.create({
     borderColor: "#BCD0C7",
     // borderColor: "#E9E3E6",
     padding: 10,
+    flexDirection: "column",
   },
   item: {
     paddingVertical: 20,
