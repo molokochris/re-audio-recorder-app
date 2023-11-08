@@ -22,7 +22,7 @@ import logo from "../../assets/logo.png";
 import { Icon } from "@rneui/base";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Home() {
+export default function Home({ route }) {
   // console.log(FileSystem.cacheDirectory);
   // console.log(Date.now());
   const [recording, setRecording] = useState();
@@ -36,6 +36,12 @@ export default function Home() {
   const recordingsDir = FileSystem.documentDirectory + "audio-recordings/";
 
   const navigation = useNavigation();
+
+  const userID = route.params.userID;
+
+  useEffect(() => {
+    console.log("User ID: ", userID);
+  }, []);
   async function startRecording() {
     try {
       const perm = await Audio.requestPermissionsAsync();

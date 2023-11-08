@@ -1,9 +1,38 @@
 import { View, Text, TextInput, Pressable } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import RegisterButton from "./RegisterButton";
 import { StyleSheet } from "react-native";
+import { FirebaseAuth } from "../../Auth/firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useNavigation } from "@react-navigation/native";
 
 export default function RegisterForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullname, setFullName] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const navigation = useNavigation();
+  const auth = FirebaseAuth;
+
+  const onRegister = async () => {
+    setLoading(true);
+    try {
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log(response);
+      alert("Success!! ");
+      navigation.navigate("Login");
+    } catch (error) {
+      console.log(error);
+      alert("Failed!! " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <View style={style.formContainer}>
       <TextInput
@@ -41,6 +70,7 @@ export default function RegisterForm() {
         placeholderTextColor="whitesmoke"
         cursorColor="tomato"
         textContentType="emailAddress"
+        onChangeText={(text) => setEmail(text)}
       />
       <TextInput
         style={style.input}
@@ -48,6 +78,7 @@ export default function RegisterForm() {
         placeholderTextColor="whitesmoke"
         cursorColor="tomato"
         textContentType="password"
+        onChangeText={(text) => setPassword(text)}
       />
       <TextInput
         style={style.input}
@@ -56,9 +87,7 @@ export default function RegisterForm() {
         cursorColor="tomato"
         textContentType="password"
       />
-      {/* <Pressable style={{ alignSelf: "flex-end", marginBottom: 15 }}>
-        <Text style={{ color: "whitesmoke" }}>have an account? </Text>
-      </Pressable> */}
+      <RegisterButton onRegister={onRegister} loading={loading} />
     </View>
   );
 }

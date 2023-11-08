@@ -32,7 +32,7 @@ export default function Register() {
         translucent={true}
       />
       <RegisterForm />
-      <RegisterButton />
+      {/* <RegisterButton /> */}
     </ImageBackground>
   );
 }

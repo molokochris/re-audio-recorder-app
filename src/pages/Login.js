@@ -7,13 +7,14 @@ import {
   ImageBackground,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import LoginButton from "../components/LoginComponents/LoginButton";
 import LoginForm from "../components/LoginComponents/LoginForm";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Login() {
   const navigation = useNavigation();
+
   return (
     <ImageBackground
       style={{
@@ -44,7 +45,7 @@ export default function Login() {
       />
 
       <LoginForm />
-      <LoginButton />
+      {/* <LoginButton /> */}
       <View style={{ marginTop: 15, flexDirection: "row" }}>
         <Text style={{ color: "whitesmoke" }}>Don't have an account? </Text>
         <Pressable onPress={() => navigation.navigate("Register")}>
