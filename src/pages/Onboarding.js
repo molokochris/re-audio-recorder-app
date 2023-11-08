@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, ImageBackground, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  Image,
+  StatusBar,
+} from "react-native";
 import React from "react";
 import GetStartedButton from "../components/OnboardingComponents/GetStartedButton";
 // import { WalkthroughSwiper } from "react-native-walkthrough-swiper";
@@ -10,8 +17,13 @@ export default function Onboarding() {
   return (
     <View style={style.container}>
       {/* <Text>TT</Text> */}
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent={true}
+      />
       <ImageBackground
-        style={{ flex: 4, backgroundColor: "red" }}
+        style={{ flex: 4 }}
         source={require("../../assets/cartoon.png")}
       >
         <View
@@ -34,6 +46,7 @@ export default function Onboarding() {
           }}
         >
           <GetStartedButton />
+          {/* <Text>GG</Text> */}
         </View>
       </ImageBackground>
     </View>

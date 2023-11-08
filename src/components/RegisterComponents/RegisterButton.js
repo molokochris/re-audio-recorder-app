@@ -2,7 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
-export default function LoginButton() {
+export default function RegisterButton() {
   const navigation = useNavigation();
   return (
     // <View>
@@ -16,10 +16,10 @@ export default function LoginButton() {
         // marginTop: 40,
         borderRadius: 8,
       }}
-      onPress={() => navigation.navigate("Home")}
+      onPress={() => navigation.navigate("Login")}
     >
       <Text style={{ color: "whitesmoke", fontWeight: "500", fontSize: 16 }}>
-        Login
+        Register
       </Text>
     </Pressable>
     // </View>
