@@ -10,6 +10,7 @@ import Login from "./src/pages/Login";
 import Signup from "./src/pages/Signup";
 import Home from "./src/pages/Home";
 import Register from "./src/pages/Register";
+import Profile from "./src/pages/Profile";
 
 // export default function App() {
 //   const Stack = createNativeStackNavigator();
@@ -69,6 +70,18 @@ function App() {
           name="Home"
           component={Home}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            headerShown: true,
+            title: "",
+            headerStyle: {
+              backgroundColor: "#BCD0C7",
+            },
+            headerTintColor: "rgba(54, 69, 79, 0.8)",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -8,6 +8,7 @@ import {
   Text,
   View,
   ScrollView,
+  ImageBackground,
 } from "react-native";
 // import Home from "./components/Home";
 import { Audio } from "expo-av";
@@ -18,6 +19,8 @@ import records2 from "../../assets/mic-icon-2.png";
 import play from "../../assets/play-icon.png";
 import pause from "../../assets/pause-icon.png";
 import logo from "../../assets/logo.png";
+import { Icon } from "@rneui/base";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Home() {
   // console.log(FileSystem.cacheDirectory);
@@ -32,29 +35,7 @@ export default function Home() {
 
   const recordingsDir = FileSystem.documentDirectory + "audio-recordings/";
 
-  // useEffect(() => {
-  //   //Check if the Document Directory was created
-  //   const makeDir = async () => {
-  //     const dir = await FileSystem.getInfoAsync(recordingsDir);
-  //     if (!dir.exists) {
-  //       console.log("Recordings Folder directory doesn't exist, creating....");
-  //       await FileSystem.makeDirectoryAsync(recordingsDir, {
-  //         intermediates: true,
-  //       });
-  //     }
-  //     const dirInfo = await FileSystem.readDirectoryAsync(recordingsDir);
-  //     console.log("URI of Recording Folder.: ", recordingsDir);
-  //     console.log(dir);
-  //     console.log("Contents of Recording Folder:");
-  //     console.log(dirInfo);
-  //   };
-
-  //   makeDir();
-  // }, [update]);
-
-  // console.log(uri);
-
-  //Start Recording & Stop Recording
+  const navigation = useNavigation();
   async function startRecording() {
     try {
       const perm = await Audio.requestPermissionsAsync();
@@ -134,13 +115,41 @@ export default function Home() {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" translucent={false} backgroundColor="#e5e5e5" />
+    <ImageBackground
+      source={require("../../assets/cartoon.png")}
+      style={styles.container}
+    >
+      <StatusBar
+        style="light"
+        translucent={true}
+        // backgroundColor="#e5e5e5"
+      />
       <View style={styles.head}>
+        <Pressable
+          style={{
+            alignSelf: "flex-end",
+            // marginRight: 10,
+            backgroundColor: "#BCD0C7",
+            height: 40,
+            width: 40,
+            borderRadius: 100,
+            justifyContent: "center",
+            alignItems: "center",
+            // marginBottom: 10,
+            position: "absolute",
+            top: 50,
+            right: 10,
+          }}
+          onPress={() => navigation.navigate("Profile")}
+        >
+          {/* <Text>Profile</Text> */}
+          <Icon name="user" type="feather" />
+        </Pressable>
         <Image source={records} style={{ width: 50, height: 50 }} />
         <Image source={logo} />
         {/* <Text style={styles.logo}>Snip</Text> */}
       </View>
+
       <View style={styles.overContainer}>
         <View style={styles.recordList}>
           <ScrollView showsVerticalScrollIndicator={false}>
@@ -172,14 +181,16 @@ export default function Home() {
         </View>
         {/* </View> */}
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#e5e5e5",
+
+    backgroundColor: "#28282B",
+    // backgroundColor: "#e5e5e5",
     // backgroundColor: "#BCD0C7",
     // alignItems: "center",
     justifyContent: "flex-end",
@@ -204,7 +215,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    backgroundColor: "#ffffff",
+    backgroundColor: "rgba(54, 69, 79, 0.95)",
+    // backgroundColor: "#343434",
+    // backgroundColor: "#ffffff",
     // backgroundColor: "#B2B2B2",
     alignItems: "center",
   },
@@ -219,18 +232,26 @@ const styles = StyleSheet.create({
     // borderColor: "#E9E3E6",
     padding: 10,
     flexDirection: "column",
+    backgroundColor: "rgba(54, 69, 79, 1)",
   },
   item: {
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#BCD0C7",
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    // borderBottomWidth: 1,
+    // borderBottomColor: "#BCD0C7",
     flexDirection: "row",
     alignItems: "center",
+    // borderWidth: 1.5,
+    // borderColor: "#BCD0C7",
+    borderRadius: 10,
+    backgroundColor: "#BCD0C7",
+    marginBottom: 6,
   },
   recordName: {
     width: "90%",
     fontSize: 15,
     fontWeight: "500",
+    color: "rgba(54, 69, 79, 1)",
   },
   playIcon: {
     width: 30,
