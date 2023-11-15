@@ -2,18 +2,40 @@ import { View, Text, TextInput, Pressable } from "react-native";
 import React, { useState } from "react";
 import RegisterButton from "./RegisterButton";
 import { StyleSheet } from "react-native";
-import { FirebaseAuth } from "../../Auth/firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  FirebaseApp,
+  FirebaseAuth,
+  FirebaseDB,
+} from "../../Auth/firebaseConfig";
+import {
+  getFirestore,
+  collection,
+  query,
+  getDocs,
+  doc,
+  addDoc,
+  setDoc,
+} from "firebase/firestore";
+import { createUserWithEmailAndPassword, Auth } from "@firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 
 export default function RegisterForm() {
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [fullname, setFullName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [contactNumbers, setContactNumbers] = useState("");
   const [loading, setLoading] = useState(false);
+  // const userRef = FirebaseDB.c;
 
+  console.log("");
   const navigation = useNavigation();
   const auth = FirebaseAuth;
+
+  //set up firestore
+  const database = getFirestore();
+  const userRef = collection(database, "users");
 
   const onRegister = async () => {
     setLoading(true);
@@ -23,7 +45,10 @@ export default function RegisterForm() {
         email,
         password
       );
+      let user = { fullname, surname, contactNumbers, email, dateOfBirth };
+      const formRes = await addDoc(userRef, user);
       console.log(response);
+      console.log(formRes);
       alert("Success!! ");
       navigation.navigate("Login");
     } catch (error) {
@@ -41,6 +66,8 @@ export default function RegisterForm() {
         placeholderTextColor="whitesmoke"
         cursorColor="tomato"
         textContentType="name"
+        // value={fullname}
+        onChangeText={(text) => setFullName(text)}
       />
       <TextInput
         style={style.input}
@@ -48,6 +75,8 @@ export default function RegisterForm() {
         placeholderTextColor="whitesmoke"
         cursorColor="tomato"
         textContentType="familyName"
+        // value={surname}
+        onChangeText={(text) => setSurname(text)}
       />
       <TextInput
         style={style.input}
@@ -55,6 +84,7 @@ export default function RegisterForm() {
         placeholderTextColor="whitesmoke"
         cursorColor="tomato"
         keyboardType="number-pad"
+        onChangeText={(text) => setDateOfBirth(text)}
       />
       <TextInput
         style={style.input}
@@ -63,6 +93,7 @@ export default function RegisterForm() {
         cursorColor="tomato"
         textContentType="telephoneNumber"
         keyboardType="number-pad"
+        onChangeText={(text) => setContactNumbers(text)}
       />
       <TextInput
         style={style.input}
@@ -88,6 +119,12 @@ export default function RegisterForm() {
         textContentType="password"
       />
       <RegisterButton onRegister={onRegister} loading={loading} />
+      <Text style={{ justifyContent: "center", alignItems: "center" }}>
+        Already have an account?{" "}
+        <Pressable onPress={() => navigation.navigate("Login")}>
+          <Text style={{ color: "tomato" }}>Login</Text>
+        </Pressable>
+      </Text>
     </View>
   );
 }
