@@ -25,7 +25,7 @@ export default function LoginForm() {
     setLoading(true);
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
-      alert("check your email!");
+      // alert("check your email!");
       let userID = response.user.uid;
       navigation.navigate("Home", { userID: userID });
       console.log(response.user.uid);
